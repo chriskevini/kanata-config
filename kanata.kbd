@@ -36,7 +36,7 @@
   rctl_nav rctl
   
   ;; Num layer aliases
-  lalt_num lalt
+  lalt_num (layer-while-held sym_layer)
   ralt_sym lsft
 )
 

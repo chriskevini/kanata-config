@@ -2,9 +2,8 @@
   tap-timeout 150
   hold-timeout 300
   ralt-hold-timeout 150
-  chord-timeout 50
-  qw-chord-timeout 100
-  df-chord-timeout 100
+  fast-chord-timeout 50
+  slow-chord-timeout 100
 )
 
 (defalias
@@ -17,14 +16,14 @@
   tbase (layer-switch base)
   
   ;; Chord aliases for base layer
-  q (chord qw q)
-  w (chord qw w)
-  d (chord df d)
-  f (chord df f)
-  z (chord name z)
-  x (chord name x)
-  c (chord name c)
-  v (chord name v)
+  q (chord slow_chords q)
+  w (chord slow_chords w)
+  d (chord slow_chords d)
+  f (chord slow_chords f)
+  z (chord fast_chords z)
+  x (chord fast_chords x)
+  c (chord fast_chords c)
+  v (chord fast_chords v)
   
   ;; Chord aliases for game layer
   zgame(chord game_chords z)
@@ -40,7 +39,7 @@
   raltsym lsft
 )
 
-(defchords name $chord-timeout
+(defchords fast_chords $fast-chord-timeout
   (c) c
   (v) v
   (c v) M-spc
@@ -50,23 +49,17 @@
   (z x) @tgame
 )
 
-;; Separate chord group for d+f with longer timeout
-;; QMK/Vial split keyboards have timing delays that prevent d+f from working with 50ms timeout
-(defchords df $df-chord-timeout
+;; QMK/Vial split keyboards have timing delays that require longer timeout
+(defchords slow_chords $slow-chord-timeout
+  (q) q
+  (w) w
+  (q w) esc
   (d) d
   (f) f
   (d f) tab
 )
 
-;; Separate chord group for q+w with longer timeout
-;; QMK/Vial split keyboards have timing delays that prevent q+w from working with 50ms timeout
-(defchords qw $qw-chord-timeout
-  (q) q
-  (w) w
-  (q w) esc
-)
-
-(defchords game_chords $chord-timeout
+(defchords game_chords $fast-chord-timeout
   (z) z
   (x) x
   (z x) @tbase

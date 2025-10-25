@@ -2,33 +2,29 @@
   tap-timeout 150
   hold-timeout 300
   ralt-hold-timeout 150
-  chord-timeout 50
-  qw-chord-timeout 100
-  df-chord-timeout 100
+  fast-chord-timeout 50
+  slow-chord-timeout 100
 )
 
 (defalias
   lalt (tap-hold-release $tap-timeout $hold-timeout C-bspc lctl)
   ralt (tap-hold-release $tap-timeout $ralt-hold-timeout ret lsft)
-  rctl (tap-hold-press $tap-timeout $hold-timeout esc (layer-while-held num_layer))
-  spc (tap-hold-release $tap-timeout $hold-timeout spc (layer-while-held nav_layer))
+  rctl (tap-hold-press $tap-timeout $hold-timeout esc (layer-while-held num))
+  spc (tap-hold-release $tap-timeout $hold-timeout spc (layer-while-held nav))
   
-  tgam (layer-switch gaming)
-  tdef (layer-switch default)
   
-  ;; Chord aliases for default layer
-  q (chord qw q)
-  w (chord qw w)
-  d (chord df d)
-  f (chord df f)
-  z (chord name z)
-  x (chord name x)
-  c (chord name c)
-  v (chord name v)
+  ;; Chord aliases for base layer
+  q (chord slow_chords q)
+  w (chord slow_chords w)
+  x (chord slow_chords x)
+  d (chord slow_chords d)
+  f (chord slow_chords f)
+  c (chord fast_chords c)
+  v (chord fast_chords v)
   
-  ;; Chord aliases for gaming layer
-  gz (chord gaming_chords z)
-  gx (chord gaming_chords x)
+  ;; Chord aliases for game layer
+  escgame (chord game_chords esc)
+  tabgame (chord game_chords tab)
   
   ;; Nav layer aliases
   laltnav M-bspc
@@ -36,40 +32,32 @@
   rctlnav M-esc
   
   ;; Num layer aliases
-  laltnum (layer-while-held sym_layer)
+  laltnum (layer-while-held sym)
   raltsym lsft
 )
 
-(defchords name $chord-timeout
+(defchords fast_chords $fast-chord-timeout
   (c) c
   (v) v
   (c v) M-spc
-  (z) z
-  (x) x
-  (x c) M-A-spc
-  (z x) @tgam
 )
 
-;; Separate chord group for d+f with longer timeout
-;; QMK/Vial split keyboards have timing delays that prevent d+f from working with 50ms timeout
-(defchords df $df-chord-timeout
+;; QMK/Vial split keyboards have timing delays that require longer timeout
+(defchords slow_chords $slow-chord-timeout
+  (q) q
+  (w) w
+  (q w) esc
+  (x) x
+  (w x) (layer-switch game)
   (d) d
   (f) f
   (d f) tab
 )
 
-;; Separate chord group for q+w with longer timeout
-;; QMK/Vial split keyboards have timing delays that prevent q+w from working with 50ms timeout
-(defchords qw $qw-chord-timeout
-  (q) q
-  (w) w
-  (q w) esc
-)
-
-(defchords gaming_chords $chord-timeout
-  (z) z
-  (x) x
-  (z x) @tdef
+(defchords game_chords $fast-chord-timeout
+  (esc) esc
+  (tab) tab
+  (esc tab) (layer-switch base)
 )
 
 (defsrc
@@ -79,35 +67,35 @@
                              lalt     spc      ralt     rctl
 )
 
-(deflayer default
+(deflayer base
   @q       @w       _        _        _        _        _        _        _        _
-  a        _        @d       @f       _        _        _        _        _        ;        _
-  @z       @x       @c       @v       _        _        _        _        _        _
+  _        _        @d       @f       _        _        _        _        _        _        _
+  _        @x       @c       @v       _        _        _        _        _        _
                              @lalt    @spc     @ralt    @rctl
 )
 
-(deflayer gaming
-  esc      q        w        e        r        t        y        u        i        o
+(deflayer game
+  @escgame q        w        e        r        t        y        u        i        o
   lsft     a        s        d        f        g        h        j        k        ;        _
-  tab      @gz      @gx      c        v        b        n        _        _        _
+  @tabgame _        _        c        v        b        n        _        _        _
                              lctl     spc      @ralt    rctl
 )
 
-(deflayer nav_layer
+(deflayer nav
   M-q      M-w      M-e      M-r      M-t      M-y      M-u      M-up     M-o      M-p
   M-1      M-2      M-3      M-4      M-5      M-h      M-left   M-down   M-right  M-;      _
   M-z      M-x      M-c      M-v      M-b      M-n      M-m      _        _        _
                              @laltnav _       @raltnav  @rctlnav
 )
 
-(deflayer num_layer
+(deflayer num
   _        _        _        _        _        _        _        up       _        _
   1        2        3        4        5        _        left     down     right    _        _
   6        7        8        9        0        _        _        _        _        _
                              @laltnum _        _        _
 )
 
-(deflayer sym_layer
+(deflayer sym
   S-1      S-2      S-3      ]        S-[      S-]      S-7      S-8      S-9      S-0
   S-3      S-4      S-9      S-0      grv      S-grv    -        S-=      =        S-\      _
   S-5      S-6      [        ]        \        S--      /        _        _        _

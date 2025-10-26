@@ -2,8 +2,7 @@
   tap-timeout 150
   hold-timeout 300
   ralt-hold-timeout 150
-  fast-chord-timeout 50
-  slow-chord-timeout 100
+  chord-timeout 100
 )
 
 (defalias
@@ -14,13 +13,13 @@
   
   
   ;; Chord aliases for base layer
-  q (chord slow_chords q)
-  w (chord slow_chords w)
-  x (chord slow_chords x)
-  d (chord slow_chords d)
-  f (chord slow_chords f)
-  c (chord fast_chords c)
-  v (chord fast_chords v)
+  q (chord base_chords q)
+  w (chord base_chords w)
+  x (chord base_chords x)
+  d (chord base_chords d)
+  f (chord base_chords f)
+  c (chord base_chords c)
+  v (chord base_chords v)
   
   ;; Chord aliases for game layer
   escgame (chord game_chords esc)
@@ -36,19 +35,17 @@
   raltsym lsft
 )
 
-(defchords fast_chords $fast-chord-timeout
-  (c) c
-  (v) v
-  (c v) M-spc
-)
-
-;; QMK/Vial split keyboards have timing delays that require longer timeout
-(defchords slow_chords $slow-chord-timeout
+;; 100ms timeout for split keyboard cross-hand chords
+(defchords base_chords $chord-timeout
   (q) q
   (w) w
   (q w) esc
   (x) x
+  (c) c
+  (v) v
   (w x) (layer-switch game)
+  (x c) M-A-spc
+  (c v) M-spc
   (d) d
   (f) f
   (d f) tab

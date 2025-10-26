@@ -1,30 +1,32 @@
+(defcfg process-unmapped-keys yes)
 (defvar
   tap-timeout 150
   hold-timeout 300
   ralt-hold-timeout 150
   fast-chord-timeout 50
   slow-chord-timeout 100
+  mod-chord-timeout 50
 )
 
 (defalias
-  lalt (tap-hold-release $tap-timeout $hold-timeout C-bspc lctl)
-  ralt (tap-hold-release $tap-timeout $ralt-hold-timeout ret lsft)
+  lalt (tap-hold-release $tap-timeout $hold-timeout C-bspc (layer-while-held ctl))
+  ralt (tap-hold-release $tap-timeout $ralt-hold-timeout ret (layer-while-held sft))
   rctl (tap-hold-press $tap-timeout $hold-timeout esc (layer-while-held num))
   spc (tap-hold-release $tap-timeout $hold-timeout spc (layer-while-held nav))
   
   
   ;; Chord aliases for base layer
-  q (chord slow_chords q)
-  w (chord slow_chords w)
-  x (chord slow_chords x)
-  d (chord slow_chords d)
-  f (chord slow_chords f)
-  c (chord fast_chords c)
-  v (chord fast_chords v)
+  ;; q (chord slow_chords q)
+  ;; w (chord slow_chords w)
+  ;; x (chord slow_chords x)
+  ;; d (chord slow_chords d)
+  ;; f (chord slow_chords f)
+  ;; c (chord fast_chords c)
+  ;; v (chord fast_chords v)
   
   ;; Chord aliases for game layer
-  escgame (chord game_chords esc)
-  tabgame (chord game_chords tab)
+  ;; escgame (chord game_chords esc)
+  ;; tabgame (chord game_chords tab)
   
   ;; Nav layer aliases
   laltnav M-bspc
@@ -34,31 +36,36 @@
   ;; Num layer aliases
   laltnum (layer-while-held sym)
   raltsym lsft
+  
+  ;; Sft layer aliases
+  laltsft (layer-while-held num)
+  ;; Ctl layer aliases
+  raltctl (layer-while-held sym)
 )
 
-(defchords fast_chords $fast-chord-timeout
-  (c) c
-  (v) v
-  (c v) M-spc
-)
-
-;; QMK/Vial split keyboards have timing delays that require longer timeout
-(defchords slow_chords $slow-chord-timeout
-  (q) q
-  (w) w
-  (q w) esc
-  (x) x
-  (w x) (layer-switch game)
-  (d) d
-  (f) f
-  (d f) tab
-)
-
-(defchords game_chords $fast-chord-timeout
-  (esc) esc
-  (tab) tab
-  (esc tab) (layer-switch base)
-)
+;; (defchords fast_chords $fast-chord-timeout
+;;   (c) c
+;;   (v) v
+;;   (c v) M-spc
+;; )
+;; 
+;; ;; QMK/Vial split keyboards have timing delays that require longer timeout
+;; (defchords slow_chords $slow-chord-timeout
+;;   (q) q
+;;   (w) w
+;;   (q w) esc
+;;   (x) x
+;;   (w x) (layer-switch game)
+;;   (d) d
+;;   (f) f
+;;   (d f) tab
+;; )
+;; 
+;; (defchords game_chords $fast-chord-timeout
+;;   (esc) esc
+;;   (tab) tab
+;;   (esc tab) (layer-switch base)
+;; )
 
 (defsrc
   q        w        e        r        t        y        u        i        o        p
@@ -68,16 +75,16 @@
 )
 
 (deflayer base
-  @q       @w       _        _        _        _        _        _        _        _
-  _        _        @d       @f       _        _        _        _        _        _        _
-  _        @x       @c       @v       _        _        _        _        _        _
+  _        _        _        _        _        _        _        _        _        _
+  _        _        _        _        _        _        _        _        _        _        _
+  _        _        _        _        _        _        _        _        _        _
                              @lalt    @spc     @ralt    @rctl
 )
 
 (deflayer game
-  @escgame q        w        e        r        t        y        u        i        o
+  esc      q        w        e        r        t        y        u        i        o
   lsft     a        s        d        f        g        h        j        k        ;        _
-  @tabgame _        _        c        v        b        n        _        _        _
+  tab      _        _        c        v        b        n        _        _        _
                              lctl     spc      @ralt    rctl
 )
 
@@ -100,4 +107,18 @@
   S-3      S-4      S-9      S-0      grv      S-grv    -        S-=      =        S-\      _
   S-5      S-6      [        ]        \        S--      /        _        _        _
                              _        _        _        _
+)
+
+(deflayer sft
+  S-q      S-w      S-e      S-r      S-t      S-y      S-u      S-i      S-o      S-p
+  S-a      S-s      S-d      S-f      S-g      S-h      S-j      S-k      S-l      S-;      S-'
+  S-z      S-x      S-c      S-v      S-b      S-n      S-m      S-,      S-.      S-/
+                             @laltsft _        _        _
+)
+
+(deflayer ctl
+  C-q      C-w      C-e      C-r      C-t      C-y      C-u      C-i      C-o      C-p
+  C-a      C-s      C-d      C-f      C-g      C-h      C-j      C-k      C-l      C-;      C-'
+  C-z      C-x      C-c      C-v      C-b      C-n      C-m      C-,      C-.      C-/
+                             _        _        @raltctl _
 )
